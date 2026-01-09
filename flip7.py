@@ -1,3 +1,8 @@
+# Flip7 - CardCounter
+# (c) Ralf Huwald 2023-2026
+#
+# Version for Pimoroni Presto (4" Display, 480x480 hiRes Version)
+
 from presto import Presto
 from picovector import ANTIALIAS_BEST, PicoVector
 import sys
@@ -28,18 +33,8 @@ WIDTH, HEIGHT = display.get_bounds()
 CENTER_X = WIDTH // 2
 CENTER_Y = HEIGHT // 2
 
-AQUA    = display.create_pen(0,255,255)
-FUCHSIA = display.create_pen(255,0,255)
-LIME    = display.create_pen(0,255,0)
-OLIVE   = display.create_pen(128,128,0)
-BLACK   = display.create_pen(0,0,0)
-MAROON  = display.create_pen(128,0,0)
-PURPLE  = display.create_pen(128,0,128)
-TEAL    = display.create_pen(0,128,128)
-NAVY    = display.create_pen(0,0,128)
-WHITE   = display.create_pen(255,255,255)
-YELLOW  = display.create_pen(255,255,0)
-
+BLACK           = display.create_pen(0,0,0)
+WHITE           = display.create_pen(255,255,255)
 MEDIUMVIOLETRED = display.create_pen(199,21,133) #     0
 SILVER          = display.create_pen(192,192,192) #    1
 OLIVEDRAB       = display.create_pen(192,255,62) #     2
@@ -53,7 +48,7 @@ ORANGE          = display.create_pen(255,165,0) #      9
 RED             = display.create_pen(255,0,0) #       10
 MEDIUMSLATEBLUE = display.create_pen(123,104,238) #   11
 GRAY            = display.create_pen(128,128,128) #   12
-BLUE            = display.create_pen(0,0,255) #       Aktion und Bonus
+BLUE            = display.create_pen(0,0,255) #       Action/Aktion and/und Bonus
 
 COLORS     = {}
 COLORS[0]  = MEDIUMVIOLETRED
@@ -81,7 +76,9 @@ def init():
     karten_gesamt = 0
     x = 10
     y = 80
+    # ACTION, BONUS, RESET
     for karte in (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, "AKTION", "BONUS", "RESET"):
+        # ACTION
         if karte == "AKTION":
             karten[karte] = KARTE(wert = karte, vorhanden = 9, color = BLUE, x = x, y = y)
         elif karte == "BONUS":
@@ -162,10 +159,13 @@ class KARTE:
             pass
         else:
             if self.vorhanden == 0:
+                # No card
                 text = "Keine Karte"
             elif self.vorhanden == 1:
+                # 1 card
                 text = "1 Karte"
             else:
+                # nnn cards
                 text = str(self.vorhanden) + " Karten"
             if False:
                 vector.set_font("fonts/Roboto-Medium.af", 15)
@@ -194,6 +194,7 @@ class KARTE:
 display.set_pen(BLACK)
 display.clear()
 
+# Flip 7 - The best card game in the world
 show_title("Flip7 - Das beste Kartenspiel aller Zeiten", center = True, background = RED, foreground = WHITE)
 
 init()
@@ -201,6 +202,7 @@ for _ in karten:
     karte = karten[_]
     karte.show(karten_gesamt)
 
+# There are still nnn cards in the deck...
 show_footer(f"Im Stapel befinden sich noch {karten_gesamt} Karten...", center = True, background = RED, foreground = WHITE)
 
 presto.update()
@@ -233,11 +235,15 @@ while True:
             karte = karten[_]
             karte.show(karten_gesamt = karten_gesamt)
         if karten_gesamt == 0:
+            # The stack is empty, please reshuffle...
             show_footer(f"Der Stapel ist aufgebraucht, bitte neu mischen...", center = True, background = RED, foreground = WHITE)
         elif karten_gesamt == 1:
+            # There is 1 card left in the pile...
             show_footer(f"Im Stapel befinden sich noch 1 Karte...", center = True, background = RED, foreground = WHITE)
         else:
+            # There are still nnn cards in the deck...
             show_footer(f"Im Stapel befinden sich noch {karten_gesamt} Karten...", center = True, background = RED, foreground = WHITE)
         presto.update()
 
     time.sleep(.01)
+
